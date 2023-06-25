@@ -35,12 +35,18 @@ public class User {
     @Column(name = "country", nullable = false, length = 30)
     private String country;
 
+    @Column(name = "address", nullable = false, length = 30)
+    private String address;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(name="is_active", nullable = false)
+    private Boolean isActive;
+
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
+        this.isActive = true;
     }
 }

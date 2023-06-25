@@ -1,4 +1,4 @@
 package com.pokeswap.api.dto;
 
-public class UserRegisterDTO {
+public class UserDTO {
 }
