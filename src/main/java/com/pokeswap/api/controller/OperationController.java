@@ -21,26 +21,31 @@ public class OperationController {
         this.operationService = operationService;
     }
 
+    @Transactional
     @PostMapping("/operations")
     public ResponseEntity<Operation> createOperation(@RequestBody Operation operation) {
         return new ResponseEntity<>(operationService.createOperation(operation), HttpStatus.CREATED);
     }
 
+    @Transactional(readOnly = true)
     @GetMapping("/operations")
     public ResponseEntity<List<Operation>> getAllOperations() {
         return new ResponseEntity<>(operationService.getAllOperations(), HttpStatus.OK);
     }
 
+    @Transactional(readOnly = true)
     @GetMapping("/operations/{id}")
     public ResponseEntity<Operation> getOperationById(@PathVariable Long id) {
         return new ResponseEntity<>(operationService.getOperationById(id), HttpStatus.OK);
     }
 
+    @Transactional
     @PutMapping("/operations/{id}")
     public ResponseEntity<Operation> updateOperation(@PathVariable Long id, @RequestBody Operation operation) {
         return new ResponseEntity<>(operationService.updateOperation(id, operation), HttpStatus.OK);
     }
 
+    @Transactional
     @DeleteMapping("/operations/{id}")
     public ResponseEntity<Operation> deleteOperation(@PathVariable Long id) {
         return new ResponseEntity<>(operationService.deleteOperation(id), HttpStatus.OK);

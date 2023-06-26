@@ -18,26 +18,31 @@ public class CryptoController {
         this.cryptoService = cryptoService;
     }
 
+    @Transactional
     @PostMapping("/cryptos")
     public ResponseEntity<Crypto> createCrypto(@RequestBody Crypto crypto) {
         return new ResponseEntity<>(cryptoService.createCrypto(crypto), HttpStatus.CREATED);
     }
 
+    @Transactional(readOnly = true)
     @GetMapping("/cryptos")
     public ResponseEntity<Iterable<Crypto>> getAllCryptos() {
         return new ResponseEntity<>(cryptoService.getAllCryptos(), HttpStatus.OK);
     }
 
+    @Transactional(readOnly = true)
     @GetMapping("/cryptos/{id}")
     public ResponseEntity<Crypto> getCryptoById(@PathVariable Long id) {
         return new ResponseEntity<>(cryptoService.getCryptoById(id), HttpStatus.OK);
     }
 
+    @Transactional
     @PutMapping("/cryptos/{id}")
     public ResponseEntity<Crypto> updateCrypto(@PathVariable Long id, @RequestBody Crypto crypto) {
         return new ResponseEntity<>(cryptoService.updateCrypto(id, crypto), HttpStatus.OK);
     }
 
+    @Transactional
     @DeleteMapping("/cryptos/{id}")
     public ResponseEntity<Crypto> deleteCrypto(@PathVariable Long id) {
         return new ResponseEntity<>(cryptoService.deleteCrypto(id), HttpStatus.OK);
