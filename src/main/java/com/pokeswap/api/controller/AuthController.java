@@ -29,6 +29,10 @@ public class AuthController {
     @Transactional
     @PostMapping("/auth/login")
     public ResponseEntity<String> login(@RequestBody LoginDTO loginDTO) {
+        Boolean userExists = authService.userExists(loginDTO.getEmail());
+        if (!userExists) {
+            return ResponseEntity.badRequest().body("User does not exist");
+        }
         String res = authService.login(loginDTO);
         if (res == null || res.isEmpty()) {
             return ResponseEntity.badRequest().body("Invalid credentials");
