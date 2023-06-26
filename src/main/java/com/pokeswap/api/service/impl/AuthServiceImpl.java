@@ -34,6 +34,7 @@ public class AuthServiceImpl implements AuthService {
         Algorithm algorithm = Algorithm.HMAC512(jwtSecret);
         String jwt = JWT.create()
                 .withIssuer("auth0")
+                .withClaim("id", user.getId())
                 .withClaim("email", user.getEmail())
                 .withClaim("password", user.getPassword())
                 .withClaim("name", user.getName())
