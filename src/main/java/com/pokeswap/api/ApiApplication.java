@@ -1,5 +1,7 @@
 package com.pokeswap.api;
 
+import com.auth0.jwt.algorithms.Algorithm;
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -14,6 +16,11 @@ public class ApiApplication {
 	public PasswordEncoder encoder() {
 		return new BCryptPasswordEncoder();
 	}
+	@Bean
+	public ModelMapper modelMapper(){
+		return new ModelMapper();
+	}
+
 	public static void main(String[] args) {
 		SpringApplication.run(ApiApplication.class, args);
 	}

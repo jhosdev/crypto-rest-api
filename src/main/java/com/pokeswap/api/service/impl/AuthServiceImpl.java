@@ -1,16 +1,19 @@
 package com.pokeswap.api.service.impl;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.pokeswap.api.dto.LoginDTO;
-import com.pokeswap.api.dto.LoginResponseDTO;
+import com.pokeswap.api.dto.UserDTO;
 import com.pokeswap.api.model.User;
 import com.pokeswap.api.repository.UserRepository;
 import com.pokeswap.api.service.AuthService;
-import lombok.Value;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+
+import java.lang.reflect.Field;
 
 
 @Service
@@ -20,14 +23,29 @@ public class AuthServiceImpl implements AuthService {
 
     private final PasswordEncoder passwordEncoder;
 
-    //@Value("${jwt.secret}")
+    @Value("${jwt.secret}")
     private String jwtSecret;
 
-    private String generateToken(String email) {
-        return Jwts.builder()
-                .setSubject(email)
-                .signWith(SignatureAlgorithm.HS256, jwtSecret)
-                .compact();
+
+
+    private final ModelMapper modelMapper = new ModelMapper();
+
+    private String generateToken(User user) {
+        Algorithm algorithm = Algorithm.HMAC512(jwtSecret);
+        String jwt = JWT.create()
+                .withIssuer("auth0")
+                .withClaim("email", user.getEmail())
+                .withClaim("password", user.getPassword())
+                .withClaim("name", user.getName())
+                .withClaim("phone", user.getPhone())
+                .withClaim("country", user.getCountry())
+                .withClaim("address", user.getAddress())
+                .withClaim("balance", user.getBalance())
+                .withClaim("createdAt", user.getCreatedAt().toString())
+                .withClaim("isActive", user.getIsActive())
+                .sign(algorithm);
+        //System.out.println("JWT: " + jwt);
+        return jwt;
     }
 
     @Autowired
@@ -37,44 +55,38 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public LoginResponseDTO login(LoginDTO loginDTO) {
-        boolean foundUser = userRepository.existsByEmailAndIsActiveIsTrue(loginDTO.getEmail());
-
-        if (foundUser) {
-            User user = userRepository.findByEmailAndIsActiveIsTrue(loginDTO.getEmail());
-            String hashedPassword = user.getPassword();
-            String providedPassword = loginDTO.getPassword();
-
-            if (passwordEncoder.matches(providedPassword, hashedPassword)) {
-                String token = generateToken(user.getEmail());
-
-                // Create the login response DTO with the token and success status
-                LoginResponseDTO loginResponseDTO = LoginResponseDTO.builder()
-                        .token(token)
-                        .success(true)
-                        .build();
-
-                return loginResponseDTO;
-            } else {
-                return LoginResponseDTO.builder()
-                        .token(null)
-                        .success(false)
-                        .build();
-            }
-        }
-
-        return null; // User not found
+    public Boolean userExists(String email) {
+        return userRepository.existsByEmailAndIsActiveIsTrue(email);
     }
 
     @Override
-    public String register(User user) {
-        String hashedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(hashedPassword);
-        User saveduser = userRepository.save(user);
-        if (saveduser != null) {
-            return "User created successfully";
+    public String login(LoginDTO loginDTO) {
+        User user = userRepository.findByEmailAndIsActiveIsTrue(loginDTO.getEmail());
+        String hashedPassword = user.getPassword();
+        String providedPassword = loginDTO.getPassword();
+
+        if (passwordEncoder.matches(providedPassword, hashedPassword)) {
+            System.out.println("Password matches");
+            return generateToken(user);
         }
-        return "User creation failed";
+        System.out.println("Password does not match");
+        return null;
+    }
+
+    @Override
+    public Boolean register(UserDTO userDTO) {
+        try {
+            String hashedPassword = passwordEncoder.encode(userDTO.getPassword());
+            userDTO.setPassword(hashedPassword);
+            User user = modelMapper.map(userDTO, User.class);
+            System.out.println(user);
+            User saveduser = userRepository.save(user);
+            System.out.println(saveduser);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+
     }
 
 

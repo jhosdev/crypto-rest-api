@@ -20,22 +20,22 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "email", nullable = false, length = 30)
+    @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "password", nullable = false, length = 30)
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "name", nullable = false, length = 30)
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "phone", nullable = false, length = 30)
+    @Column(name = "phone", nullable = false)
     private String phone;
 
-    @Column(name = "country", nullable = false, length = 30)
+    @Column(name = "country", nullable = false)
     private String country;
 
-    @Column(name = "address", nullable = false, length = 30)
+    @Column(name = "address", nullable = false)
     private String address;
 
     @Column(name = "balance", nullable = false)
@@ -51,5 +51,6 @@ public class User {
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
         this.isActive = true;
+        this.balance = 0.0;
     }
 }

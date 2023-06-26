@@ -1,13 +1,14 @@
 package com.pokeswap.api.service;
 
 import com.pokeswap.api.dto.LoginDTO;
-import com.pokeswap.api.dto.LoginResponseDTO;
-import com.pokeswap.api.model.User;
+import com.pokeswap.api.dto.UserDTO;
 
 public interface AuthService {
 
-    LoginResponseDTO login(LoginDTO loginDTO);
+    String login(LoginDTO loginDTO);
 
-    String register(User user);
+    Boolean userExists(String email);
+
+    Boolean register(UserDTO user);
 
 }
