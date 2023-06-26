@@ -38,6 +38,9 @@ public class User {
     @Column(name = "address", nullable = false, length = 30)
     private String address;
 
+    @Column(name = "balance", nullable = false)
+    private Double balance;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
